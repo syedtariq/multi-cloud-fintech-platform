@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-15T10:00:00.000Z" agent="5.0" etag="network-topology-v2" version="22.1.16">
+  <diagram name="Multi-Region Network Topology - GDPR Compliant" id="network-topology-v2">
+    <mxGraphModel dx="2074" dy="1196" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Multi-Region Network Topology - GDPR Compliant Zero-Trust Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Internet Zone -->
+        <mxCell id="internet-zone" value="" style="fillColor=#ffcccc;strokeColor=#36393d;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1720" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="internet-label" value="Internet Zone - Untrusted Network" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#d32f2f;" vertex="1" parent="1">
+          <mxGeometry x="50" y="90" width="300" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU Users -->
+        <mxCell id="eu-users" value="EU Users&#xa;GDPR Protected" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="120" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Route 53 Global DNS -->
+        <mxCell id="route53" value="Route 53&#xa;Global DNS&#xa;Geolocation Routing" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="110" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Global Users -->
+        <mxCell id="global-users" value="Global Users&#xa;Non-EU" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="120" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Global CloudFront -->
+        <mxCell id="global-cloudfront" value="Global CloudFront&#xa;Static Assets Only&#xa;Edge Locations Worldwide" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="120" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- EU Region VPC -->
+        <mxCell id="eu-vpc" value="" style="fillColor=#f3e5f5;strokeColor=#7b1fa2;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="840" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-vpc-label" value="EU VPC (10.1.0.0/16) - eu-west-1 - GDPR Compliant Data Residency" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="230" width="500" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU DMZ Zone -->
+        <mxCell id="eu-dmz-zone" value="" style="fillColor=#fff3e0;strokeColor=#e65100;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="270" width="800" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-dmz-label" value="EU DMZ Zone - Public Subnets (Internet Facing)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="70" y="280" width="350" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU Public Subnets -->
+        <mxCell id="eu-pub-1a" value="EU Public 1A&#xa;10.1.1.0/24&#xa;eu-west-1a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-pub-1b" value="EU Public 1B&#xa;10.1.2.0/24&#xa;eu-west-1b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-pub-1c" value="EU Public 1C&#xa;10.1.3.0/24&#xa;eu-west-1c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- EU ALB -->
+        <mxCell id="eu-alb" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.application_load_balancer;" vertex="1" parent="1">
+          <mxGeometry x="520" y="320" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-alb-label" value="EU ALB&#xa;Direct API Access" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="490" y="375" width="110" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- EU WAF -->
+        <mxCell id="eu-waf" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.waf;" vertex="1" parent="1">
+          <mxGeometry x="620" y="320" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-waf-label" value="EU WAF&#xa;Regional" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="375" width="90" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- EU NAT Gateways -->
+        <mxCell id="eu-nat-1a" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="110" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-nat-1b" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="250" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-nat-1c" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="390" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU Application Zone -->
+        <mxCell id="eu-app-zone" value="" style="fillColor=#e8f5e8;strokeColor=#2e7d32;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="430" width="800" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-app-label" value="EU Application Zone - Private Subnets (EKS Worker Nodes)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="70" y="440" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU Private App Subnets -->
+        <mxCell id="eu-priv-1a" value="EU Private 1A&#xa;10.1.10.0/24&#xa;eu-west-1a&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-priv-1b" value="EU Private 1B&#xa;10.1.11.0/24&#xa;eu-west-1b&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-priv-1c" value="EU Private 1C&#xa;10.1.12.0/24&#xa;eu-west-1c&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- EU EKS Control Plane -->
+        <mxCell id="eu-eks" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks;" vertex="1" parent="1">
+          <mxGeometry x="520" y="480" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-eks-label" value="EU EKS&#xa;Control Plane" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="490" y="535" width="110" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- EU Microservices -->
+        <mxCell id="eu-services" value="EU Microservices&#xa;• Trading Engine&#xa;• Order Management&#xa;• Risk Engine&#xa;• Market Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="620" y="470" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- EU Data Zone -->
+        <mxCell id="eu-data-zone" value="" style="fillColor=#f3e5f5;strokeColor=#7b1fa2;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="650" width="800" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-data-label" value="EU Data Zone - Database Subnets (GDPR Compliant - Encrypted at Rest &amp; Transit)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="70" y="660" width="500" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EU Database Subnets -->
+        <mxCell id="eu-db-1a" value="EU DB 1A&#xa;10.1.20.0/24&#xa;eu-west-1a&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-db-1b" value="EU DB 1B&#xa;10.1.21.0/24&#xa;eu-west-1b&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eu-db-1c" value="EU DB 1C&#xa;10.1.22.0/24&#xa;eu-west-1c&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- EU Database Icons -->
+        <mxCell id="eu-rds" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.aurora;" vertex="1" parent="1">
+          <mxGeometry x="520" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-rds-label" value="EU RDS Aurora" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="745" width="100" height="15" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eu-redis" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;" vertex="1" parent="1">
+          <mxGeometry x="580" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-redis-label" value="EU Redis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="560" y="745" width="80" height="15" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eu-s3" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="640" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-s3-label" value="EU S3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="620" y="745" width="80" height="15" as="geometry" />
+        </mxCell>
+
+        <!-- EU Management Zone -->
+        <mxCell id="eu-mgmt-zone" value="" style="fillColor=#fff8e1;strokeColor=#f57f17;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="810" width="800" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eu-mgmt-label" value="EU Management Zone - Admin Access (VPN Only)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#f57f17;" vertex="1" parent="1">
+          <mxGeometry x="70" y="820" width="350" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eu-mgmt-subnet" value="EU Mgmt Subnet&#xa;10.1.30.0/24&#xa;Bastion, Monitoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="850" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eu-bastion" value="EU Bastion&#xa;MFA Required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="860" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- US Region VPC -->
+        <mxCell id="us-vpc" value="" style="fillColor=#e1f5fe;strokeColor=#01579b;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="920" y="220" width="840" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="us-vpc-label" value="US VPC (10.0.0.0/16) - us-east-1 - Primary Region" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#01579b;" vertex="1" parent="1">
+          <mxGeometry x="930" y="230" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US DMZ Zone -->
+        <mxCell id="us-dmz-zone" value="" style="fillColor=#fff3e0;strokeColor=#e65100;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="940" y="270" width="800" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="us-dmz-label" value="US DMZ Zone - Public Subnets (Internet Facing)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="950" y="280" width="350" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US Public Subnets -->
+        <mxCell id="us-pub-1a" value="US Public 1A&#xa;10.0.1.0/24&#xa;us-east-1a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="960" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-pub-1b" value="US Public 1B&#xa;10.0.2.0/24&#xa;us-east-1b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-pub-1c" value="US Public 1C&#xa;10.0.3.0/24&#xa;us-east-1c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- US ALB -->
+        <mxCell id="us-alb" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.application_load_balancer;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="320" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="us-alb-label" value="US ALB&#xa;Direct API Access" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="375" width="110" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- US WAF -->
+        <mxCell id="us-waf" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.waf;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="320" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="us-waf-label" value="US WAF&#xa;Regional" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="375" width="90" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- US NAT Gateways -->
+        <mxCell id="us-nat-1a" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="990" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-nat-1b" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-nat-1c" value="NAT GW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="340" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US Application Zone -->
+        <mxCell id="us-app-zone" value="" style="fillColor=#e8f5e8;strokeColor=#2e7d32;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="940" y="430" width="800" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="us-app-label" value="US Application Zone - Private Subnets (EKS Worker Nodes)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="950" y="440" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US Private App Subnets -->
+        <mxCell id="us-priv-1a" value="US Private 1A&#xa;10.0.10.0/24&#xa;us-east-1a&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="960" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-priv-1b" value="US Private 1B&#xa;10.0.11.0/24&#xa;us-east-1b&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-priv-1c" value="US Private 1C&#xa;10.0.12.0/24&#xa;us-east-1c&#xa;EKS Workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- US EKS Control Plane -->
+        <mxCell id="us-eks" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="480" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="us-eks-label" value="US EKS&#xa;Control Plane" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="535" width="110" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- US Microservices -->
+        <mxCell id="us-services" value="US Microservices&#xa;• Trading Engine&#xa;• Order Management&#xa;• Risk Engine&#xa;• Market Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="470" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- US Data Zone -->
+        <mxCell id="us-data-zone" value="" style="fillColor=#f3e5f5;strokeColor=#7b1fa2;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="940" y="650" width="800" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="us-data-label" value="US Data Zone - Database Subnets (Primary - Encrypted at Rest &amp; Transit)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="950" y="660" width="450" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US Database Subnets -->
+        <mxCell id="us-db-1a" value="US DB 1A&#xa;10.0.20.0/24&#xa;us-east-1a&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="960" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-db-1b" value="US DB 1B&#xa;10.0.21.0/24&#xa;us-east-1b&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="us-db-1c" value="US DB 1C&#xa;10.0.22.0/24&#xa;us-east-1c&#xa;RDS, Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- US Database Icons -->
+        <mxCell id="us-rds" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.aurora;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="us-rds-label" value="US RDS Aurora" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="745" width="100" height="15" as="geometry" />
+        </mxCell>
+
+        <mxCell id="us-redis" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="us-redis-label" value="US Redis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="745" width="80" height="15" as="geometry" />
+        </mxCell>
+
+        <mxCell id="us-s3" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="700" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="us-s3-label" value="US S3&#xa;Static Assets" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="745" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- US Management Zone -->
+        <mxCell id="us-mgmt-zone" value="" style="fillColor=#fff8e1;strokeColor=#f57f17;dashed=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="940" y="810" width="800" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="us-mgmt-label" value="US Management Zone - Admin Access (VPN Only)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#f57f17;" vertex="1" parent="1">
+          <mxGeometry x="950" y="820" width="350" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="us-mgmt-subnet" value="US Mgmt Subnet&#xa;10.0.30.0/24&#xa;Bastion, Monitoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="960" y="850" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="us-bastion" value="US Bastion&#xa;MFA Required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="860" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Traffic Flow Arrows -->
+        <!-- EU Users to Route 53 -->
+        <mxCell id="flow-eu-dns" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#9673a6;strokeWidth=3;" edge="1" parent="1" source="eu-users" target="route53">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="420" y="140" as="sourcePoint" />
+            <mxPoint x="800" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-eu-dns-label" value="EU Users&#xa;DNS Query" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="120" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Global Users to Route 53 -->
+        <mxCell id="flow-global-dns" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#6c8ebf;strokeWidth=3;" edge="1" parent="1" source="global-users" target="route53">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1300" y="140" as="sourcePoint" />
+            <mxPoint x="940" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-global-dns-label" value="Global Users&#xa;DNS Query" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="120" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Route 53 to EU ALB -->
+        <mxCell id="flow-dns-eu" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#9673a6;strokeWidth=4;" edge="1" parent="1" source="route53" target="eu-alb">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="800" y="170" as="sourcePoint" />
+            <mxPoint x="545" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-dns-eu-label" value="EU Continent&#xa;Geolocation&#xa;Direct to ALB" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#9673a6;fontStyle=1;labelBackgroundColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="620" y="220" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Route 53 to US ALB -->
+        <mxCell id="flow-dns-us" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#6c8ebf;strokeWidth=4;" edge="1" parent="1" source="route53" target="us-alb">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="940" y="170" as="sourcePoint" />
+            <mxPoint x="1425" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-dns-us-label" value="Default Route&#xa;All Others&#xa;Direct to ALB" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#6c8ebf;fontStyle=1;labelBackgroundColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="220" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- CloudFront to S3 -->
+        <mxCell id="flow-cf-s3" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;strokeWidth=2;dashed=1;" edge="1" parent="1" source="global-cloudfront" target="us-s3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1580" y="170" as="sourcePoint" />
+            <mxPoint x="1540" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-cf-s3-label" value="Static Assets&#xa;Global CDN" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#b85450;fontStyle=1;labelBackgroundColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="400" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Data Replication Arrow -->
+        <mxCell id="data-replication" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeColor=#ff6f00;strokeWidth=3;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="860" y="720" as="sourcePoint" />
+            <mxPoint x="940" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="data-repl-label" value="Cross-Region&#xa;Data Replication&#xa;DMS + Lambda" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#ff6f00;fontStyle=1;labelBackgroundColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="860" y="760" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Architecture Benefits -->
+        <mxCell id="arch-benefits" value="Architecture Benefits&#xa;• Direct ALB routing for &lt;100ms latency&#xa;• GDPR compliance with EU data residency&#xa;• Global CloudFront for static assets&#xa;• Regional WAF protection&#xa;• Cost-optimized single CDN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="950" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Security Controls -->
+        <mxCell id="security-controls" value="Zero-Trust Security&#xa;• Network segmentation (VPC isolation)&#xa;• Security Groups (stateful firewall)&#xa;• NACLs (stateless firewall)&#xa;• WAF + DDoS protection&#xa;• mTLS between services&#xa;• End-to-end encryption" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="360" y="950" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Compliance -->
+        <mxCell id="compliance-status" value="Compliance Status&#xa;• SOC 2 Type II: Multi-region controls&#xa;• PCI-DSS Level 1: Encryption everywhere&#xa;• GDPR: EU data in eu-west-1 only&#xa;• Zero-trust: Network policies&#xa;• Audit logging: CloudTrail + VPC Flow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="680" y="950" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Performance Metrics -->
+        <mxCell id="performance-metrics" value="Performance Targets&#xa;• API Latency: &lt;100ms (P95)&#xa;• Throughput: 50K-250K TPS&#xa;• Concurrent Users: 10K-50K&#xa;• Availability: 99.99% uptime&#xa;• Recovery: RTO 15min, RPO 5min" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="950" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Cost Optimization -->
+        <mxCell id="cost-optimization" value="Cost Optimization&#xa;• Single global CloudFront&#xa;• Regional resource deployment&#xa;• Reserved instances (30% savings)&#xa;• Spot instances for dev/test&#xa;• Monthly cost: $6.4K-$29.7K" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="950" width="300" height="100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

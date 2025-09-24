@@ -23,6 +23,18 @@ variable "aws_primary_region" {
   default     = "us-east-1"
 }
 
+variable "aws_eu_region" {
+  description = "AWS EU region for GDPR compliance"
+  type        = string
+  default     = "eu-west-1"
+}
+
+variable "enable_eu_region" {
+  description = "Enable EU region deployment for GDPR compliance"
+  type        = bool
+  default     = true
+}
+
 variable "azure_dr_region" {
   description = "Azure disaster recovery region"
   type        = string

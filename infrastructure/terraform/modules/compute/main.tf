@@ -60,54 +60,10 @@ resource "aws_eks_node_group" "main" {
   tags = var.common_tags
 }
 
-# CloudFront Distribution
-resource "aws_cloudfront_distribution" "main" {
-  origin {
-    domain_name = aws_lb.main.dns_name
-    origin_id   = "ALB-${aws_lb.main.name}"
-    
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
-  enabled = true
-  
-  default_cache_behavior {
-    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "ALB-${aws_lb.main.name}"
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
-    
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-    }
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
-  }
-
-  tags = var.common_tags
-}
-
-# WAF Web ACL
+# WAF Web ACL for ALB
 resource "aws_wafv2_web_acl" "main" {
   name  = "${var.name_prefix}-waf"
-  scope = "CLOUDFRONT"
+  scope = "REGIONAL"
 
   default_action {
     allow {}
@@ -136,4 +92,10 @@ resource "aws_wafv2_web_acl" "main" {
   }
 
   tags = var.common_tags
+}
+
+# Associate WAF with ALB
+resource "aws_wafv2_web_acl_association" "main" {
+  resource_arn = aws_lb.main.arn
+  web_acl_arn  = aws_wafv2_web_acl.main.arn
 }

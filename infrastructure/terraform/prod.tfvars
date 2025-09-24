@@ -5,6 +5,8 @@
 project_name         = "fintech-trading-platform"
 environment          = "prod"
 aws_primary_region   = "us-east-1"
+aws_eu_region        = "eu-west-1"
+enable_eu_region     = true
 domain_name          = "trading-platform.com"
 
 # Performance Configuration

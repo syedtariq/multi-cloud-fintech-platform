@@ -18,14 +18,9 @@ output "eks_cluster_endpoint" {
   value       = aws_eks_cluster.main.endpoint
 }
 
-output "cloudfront_distribution_id" {
-  description = "ID of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.main.id
-}
-
-output "cloudfront_domain_name" {
-  description = "Domain name of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.main.domain_name
+output "alb_zone_id" {
+  description = "Zone ID of the Application Load Balancer"
+  value       = aws_lb.main.zone_id
 }
 
 output "waf_web_acl_id" {

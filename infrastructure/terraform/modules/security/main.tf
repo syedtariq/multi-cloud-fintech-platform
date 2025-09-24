@@ -80,25 +80,66 @@ resource "aws_security_group" "eks_nodes" {
   name_prefix = "${var.name_prefix}-eks-nodes-"
   vpc_id      = var.vpc_id
 
+  # Ingress from ALB
   ingress {
-    from_port = 0
-    to_port   = 65535
-    protocol  = "tcp"
-    self      = true
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+    description     = "HTTP from ALB"
   }
 
+  # Ingress from EKS cluster
   ingress {
     from_port       = 1025
     to_port         = 65535
     protocol        = "tcp"
     security_groups = [aws_security_group.eks_cluster.id]
+    description     = "EKS cluster communication"
+  }
+
+  # Self-referencing for pod-to-pod communication
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+    description = "Pod-to-pod communication"
+  }
+
+  # Egress to databases only
+  egress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.database.id]
+    description     = "PostgreSQL access"
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.database.id]
+    description     = "Redis access"
+  }
+
+  # HTTPS for external API calls (AWS services, etc.)
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS for AWS services"
+  }
+
+  # DNS resolution
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "DNS resolution"
   }
 
   tags = merge(var.common_tags, {
@@ -110,19 +151,26 @@ resource "aws_security_group" "database" {
   name_prefix = "${var.name_prefix}-database-"
   vpc_id      = var.vpc_id
 
+  # PostgreSQL from EKS nodes only
   ingress {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.eks_nodes.id]
+    description     = "PostgreSQL from EKS nodes"
   }
 
+  # Redis from EKS nodes only
   ingress {
     from_port       = 6379
     to_port         = 6379
     protocol        = "tcp"
     security_groups = [aws_security_group.eks_nodes.id]
+    description     = "Redis from EKS nodes"
   }
+
+  # No egress rules - databases don't need outbound access
+  # This follows zero-trust principle
 
   tags = merge(var.common_tags, {
     Name = "${var.name_prefix}-database-sg"

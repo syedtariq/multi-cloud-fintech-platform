@@ -117,6 +117,7 @@ spec:
     - protocol: TCP
       port: 8080
   egress:
+  # Database access
   - to:
     - namespaceSelector:
         matchLabels:
@@ -124,6 +125,18 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+  # External exchanges and APIs (HTTPS)
+  - to: []  # Any destination
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+  # DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
 ```
 
 ## Compliance Controls Implementation

@@ -27,3 +27,8 @@ output "sqs_queue_url" {
   description = "SQS queue URL"
   value       = aws_sqs_queue.order_processing.url
 }
+
+output "s3_bucket_domain_name" {
+  description = "S3 bucket domain name for CloudFront origin"
+  value       = aws_s3_bucket.data.bucket_domain_name
+}
