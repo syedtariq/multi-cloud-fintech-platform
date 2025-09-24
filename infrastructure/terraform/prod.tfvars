@@ -137,12 +137,17 @@ network_config = {
 
 # Feature Flags
 feature_flags = {
-  enable_azure_dr        = false  # Excluded per requirements
-  enable_cross_cloud_vpn = false  # Excluded per requirements
+  enable_azure_dr        = true   # Enable Azure DR
+  enable_cross_cloud_vpn = true   # Enable cross-cloud VPN
   enable_advanced_monitoring = true
   enable_chaos_engineering = false  # Not for production
   enable_canary_deployments = true
 }
+
+# Azure DR Integration
+enable_azure_dr = true
+# azure_app_gateway_ip   = ""  # Set after Azure deployment
+# azure_app_gateway_fqdn = ""  # Set after Azure deployment
 
 # Notification Endpoints
 notification_endpoints = [

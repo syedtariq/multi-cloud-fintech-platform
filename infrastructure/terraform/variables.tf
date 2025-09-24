@@ -392,3 +392,62 @@ variable "feature_flags" {
     enable_canary_deployments = true
   }
 }
+
+# Azure DR Integration Variables
+variable "enable_azure_dr" {
+  description = "Enable Azure disaster recovery integration"
+  type        = bool
+  default     = false
+}
+
+variable "azure_app_gateway_ip" {
+  description = "Azure Application Gateway public IP address"
+  type        = string
+  default     = ""
+}
+
+variable "azure_app_gateway_fqdn" {
+  description = "Azure Application Gateway FQDN"
+  type        = string
+  default     = ""
+}
+
+# Cross-Cloud Replication Variables
+variable "rds_password" {
+  description = "RDS master password"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "azure_postgres_password" {
+  description = "Azure PostgreSQL password"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "azure_postgres_fqdn" {
+  description = "Azure PostgreSQL FQDN"
+  type        = string
+  default     = ""
+}
+
+variable "azure_redis_hostname" {
+  description = "Azure Redis Cache hostname"
+  type        = string
+  default     = ""
+}
+
+variable "azure_redis_key" {
+  description = "Azure Redis Cache access key"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "azure_vpn_gateway_ip" {
+  description = "Azure VPN Gateway public IP address"
+  type        = string
+  default     = ""
+}
