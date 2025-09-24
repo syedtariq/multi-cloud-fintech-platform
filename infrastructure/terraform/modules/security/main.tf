@@ -1,4 +1,4 @@
-# Security Module - Security Groups, KMS, IAM
+# Security Module - Security Groups, KMS, IAM, CloudTrail
 
 # KMS Keys
 resource "aws_kms_key" "cluster" {
@@ -235,3 +235,157 @@ resource "aws_iam_role_policy_attachment" "eks_container_registry_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks_nodes.name
 }
+
+# Include CloudTrail resources
+# S3 Bucket for CloudTrail Logs
+resource "aws_s3_bucket" "cloudtrail" {
+  bucket        = "${var.name_prefix}-cloudtrail-logs"
+  force_destroy = false
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-cloudtrail-logs"
+  })
+}
+
+resource "aws_s3_bucket_versioning" "cloudtrail" {
+  bucket = aws_s3_bucket.cloudtrail.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_encryption" "cloudtrail" {
+  bucket = aws_s3_bucket.cloudtrail.id
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = aws_kms_key.cloudtrail.arn
+        sse_algorithm     = "aws:kms"
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "cloudtrail" {
+  bucket = aws_s3_bucket.cloudtrail.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# CloudTrail KMS Key
+resource "aws_kms_key" "cloudtrail" {
+  description             = "KMS key for CloudTrail encryption"
+  deletion_window_in_days = 7
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Enable CloudTrail Encryption"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action = [
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-cloudtrail-key"
+  })
+}
+
+resource "aws_kms_alias" "cloudtrail" {
+  name          = "alias/${var.name_prefix}-cloudtrail"
+  target_key_id = aws_kms_key.cloudtrail.key_id
+}
+
+# CloudTrail
+resource "aws_cloudtrail" "main" {
+  name           = "${var.name_prefix}-cloudtrail"
+  s3_bucket_name = aws_s3_bucket.cloudtrail.bucket
+  s3_key_prefix  = "cloudtrail-logs"
+
+  include_global_service_events = true
+  is_multi_region_trail        = true
+  enable_logging               = true
+  enable_log_file_validation   = true
+  kms_key_id                   = aws_kms_key.cloudtrail.arn
+
+  # Data Events for S3 (Financial Data)
+  event_selector {
+    read_write_type                 = "All"
+    include_management_events       = true
+    exclude_management_event_sources = []
+
+    data_resource {
+      type   = "AWS::S3::Object"
+      values = ["arn:aws:s3:::${var.name_prefix}-*/*"]
+    }
+  }
+
+  # Insight Events for Cost Optimization
+  insight_selector {
+    insight_type = "ApiCallRateInsight"
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-cloudtrail"
+  })
+
+  depends_on = [aws_s3_bucket_policy.cloudtrail]
+}
+
+# S3 Bucket Policy for CloudTrail
+resource "aws_s3_bucket_policy" "cloudtrail" {
+  bucket = aws_s3_bucket.cloudtrail.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AWSCloudTrailAclCheck"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action   = "s3:GetBucketAcl"
+        Resource = aws_s3_bucket.cloudtrail.arn
+      },
+      {
+        Sid    = "AWSCloudTrailWrite"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.cloudtrail.arn}/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
+}
+
+data "aws_caller_identity" "current" {}
