@@ -1,0 +1,219 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" etag="xxx" version="22.1.16">
+  <diagram name="Microservices Architecture" id="microservices-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="api-gateway" value="API Gateway&#xa;Rate Limiting&#xa;Authentication" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="480" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="service-mesh" value="Istio Service Mesh" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="960" height="480" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="trading-engine-svc" value="Trading Engine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="180" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="trading-pod-1" value="Pod 1&#xa;CPU: 8 cores&#xa;Mem: 32GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="140" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="trading-pod-2" value="Pod 2&#xa;CPU: 8 cores&#xa;Mem: 32GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="trading-hpa" value="HPA: 10-50 replicas&#xa;Target: 70% CPU" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="260" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-mgmt-svc" value="Order Management" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="340" y="180" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-pod-1" value="Pod 1&#xa;CPU: 4 cores&#xa;Mem: 16GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-pod-2" value="Pod 2&#xa;CPU: 4 cores&#xa;Mem: 16GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-hpa" value="HPA: 5-20 replicas&#xa;Target: 70% CPU" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="260" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="risk-engine-svc" value="Risk Engine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="560" y="180" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="risk-pod-1" value="Pod 1&#xa;CPU: 6 cores&#xa;Mem: 24GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="580" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="risk-pod-2" value="Pod 2&#xa;CPU: 6 cores&#xa;Mem: 24GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="660" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="risk-hpa" value="HPA: 3-10 replicas&#xa;Real-time monitoring" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="260" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="market-data-svc" value="Market Data Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="780" y="180" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="market-pod-1" value="Pod 1&#xa;CPU: 4 cores&#xa;Mem: 12GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="market-pod-2" value="Pod 2&#xa;CPU: 4 cores&#xa;Mem: 12GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="880" y="210" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="market-hpa" value="HPA: 5-15 replicas&#xa;WebSocket streams" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="260" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-mgmt-svc" value="User Management" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="340" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-pod-1" value="Pod 1&#xa;CPU: 2 cores&#xa;Mem: 8GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="140" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-pod-2" value="Pod 2&#xa;CPU: 2 cores&#xa;Mem: 8GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-hpa" value="HPA: 3-15 replicas&#xa;JWT + OAuth2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="420" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="analytics-svc" value="Analytics Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="340" y="340" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="analytics-pod-1" value="Pod 1&#xa;CPU: 4 cores&#xa;Mem: 16GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="analytics-pod-2" value="Pod 2&#xa;CPU: 4 cores&#xa;Mem: 16GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="analytics-hpa" value="HPA: 2-10 replicas&#xa;Batch processing" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="420" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notification-svc" value="Notification Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="560" y="340" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notif-pod-1" value="Pod 1&#xa;CPU: 2 cores&#xa;Mem: 4GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="580" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notif-pod-2" value="Pod 2&#xa;CPU: 2 cores&#xa;Mem: 4GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="660" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notif-hpa" value="HPA: 2-8 replicas&#xa;Push notifications" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="420" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="audit-svc" value="Audit Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="780" y="340" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="audit-pod-1" value="Pod 1&#xa;CPU: 2 cores&#xa;Mem: 8GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="audit-pod-2" value="Pod 2&#xa;CPU: 2 cores&#xa;Mem: 8GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="880" y="370" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="audit-hpa" value="HPA: 2-6 replicas&#xa;Compliance logging" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="420" width="150" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="data-layer" value="Data Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;verticalAlign=top;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="500" width="840" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="aurora-db" value="Aurora&#xa;PostgreSQL&#xa;(OLTP)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="140" y="530" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dynamodb-db" value="DynamoDB&#xa;(NoSQL)&#xa;Market Data" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="240" y="530" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="redis-cache" value="ElastiCache&#xa;Redis&#xa;(Cache)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="340" y="530" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="redshift-db" value="Redshift&#xa;(OLAP)&#xa;Analytics" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="440" y="530" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="s3-storage" value="S3&#xa;(Archive)&#xa;Audit Logs" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="540" y="530" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sqs-queue" value="SQS&#xa;Order Queue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="660" y="540" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="kinesis-stream" value="Kinesis&#xa;Data Streams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="760" y="540" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sns-topic" value="SNS&#xa;Notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="860" y="540" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn1" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#82b366;" edge="1" parent="1" source="api-gateway" target="trading-engine-svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="100" as="sourcePoint" />
+            <mxPoint x="300" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn2" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#82b366;" edge="1" parent="1" source="api-gateway" target="order-mgmt-svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="100" as="sourcePoint" />
+            <mxPoint x="430" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn3" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;" edge="1" parent="1" source="trading-engine-svc" target="risk-engine-svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="300" y="240" as="sourcePoint" />
+            <mxPoint x="560" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn4" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#82b366;" edge="1" parent="1" source="order-mgmt-svc" target="market-data-svc">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="520" y="240" as="sourcePoint" />
+            <mxPoint x="780" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="mtls-label" value="mTLS Encryption&#xa;Service-to-Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="160" width="120" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="autoscale-label" value="Horizontal Pod Autoscaler&#xa;CPU/Memory/Custom Metrics" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="480" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

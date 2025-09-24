@@ -1,0 +1,161 @@
+<mxfile host="app.diagrams.net" modified="2024-01-15T10:00:00.000Z" agent="5.0" version="22.1.16">
+  <diagram name="Multi-Cloud Architecture" id="simple-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Multi-Cloud Financial Services Platform" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="264" y="20" width="300" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Users -->
+        <mxCell id="users" value="Users&#xa;10K Concurrent" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="364" y="70" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Route 53 -->
+        <mxCell id="route53" value="Route 53&#xa;DNS + Failover" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="364" y="160" width="100" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- AWS Region -->
+        <mxCell id="aws-region" value="" style="fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="240" width="350" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-label" value="AWS Primary (us-east-1)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="250" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- CloudFront -->
+        <mxCell id="cloudfront" value="CloudFront&#xa;CDN + WAF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="70" y="280" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- ALB -->
+        <mxCell id="alb" value="Application&#xa;Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="170" y="280" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- EKS -->
+        <mxCell id="eks" value="EKS Cluster&#xa;Trading Platform" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="70" y="360" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- RDS -->
+        <mxCell id="rds" value="RDS Aurora&#xa;PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="70" y="450" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Redis -->
+        <mxCell id="redis" value="ElastiCache&#xa;Redis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="170" y="450" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure Region -->
+        <mxCell id="azure-region" value="" style="fillColor=#f8cecc;strokeColor=#b85450;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="240" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="azure-label" value="Azure DR (East US 2)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="250" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure App Gateway -->
+        <mxCell id="azure-appgw" value="Application&#xa;Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="470" y="280" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- AKS -->
+        <mxCell id="aks" value="AKS Cluster&#xa;Warm Standby" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="470" y="360" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure DB -->
+        <mxCell id="azure-db" value="PostgreSQL&#xa;Replica" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="470" y="450" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure Cache -->
+        <mxCell id="azure-cache" value="Azure Cache&#xa;Redis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="570" y="450" width="80" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- VPN Connection -->
+        <mxCell id="vpn" value="Site-to-Site VPN&#xa;10 Gbps Encrypted" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeColor=#d79b00;strokeWidth=3;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="390" as="sourcePoint" />
+            <mxPoint x="450" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Connections -->
+        <mxCell id="conn1" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="users" target="route53">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="414" y="140" as="sourcePoint" />
+            <mxPoint x="414" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn2" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="route53" target="cloudfront">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="364" y="200" as="sourcePoint" />
+            <mxPoint x="150" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn3" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="cloudfront" target="alb">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="150" y="305" as="sourcePoint" />
+            <mxPoint x="170" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn4" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="alb" target="eks">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="210" y="330" as="sourcePoint" />
+            <mxPoint x="160" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn5" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="eks" target="rds">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="130" y="420" as="sourcePoint" />
+            <mxPoint x="110" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn6" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="eks" target="redis">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="420" as="sourcePoint" />
+            <mxPoint x="200" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Failover -->
+        <mxCell id="failover" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#d79b00;strokeWidth=2;dashed=1;" edge="1" parent="1" source="route53" target="azure-appgw">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="464" y="200" as="sourcePoint" />
+            <mxPoint x="510" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Performance Box -->
+        <mxCell id="perf-box" value="Performance Targets&#xa;• Latency: &lt;100ms&#xa;• Throughput: 50K TPS&#xa;• Users: 10K concurrent&#xa;• Availability: 99.99%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="50" y="570" width="150" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Compliance Box -->
+        <mxCell id="compliance-box" value="Compliance&#xa;• SOC 2 Type II&#xa;• PCI-DSS Level 1&#xa;• GDPR&#xa;• Zero-Trust Security" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="220" y="570" width="150" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Cost Box -->
+        <mxCell id="cost-box" value="Cost Efficiency&#xa;• $6.4K - $29.7K/month&#xa;• Decreasing unit economics&#xa;• 40% RI savings&#xa;• 60% Spot savings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="450" y="570" width="150" height="80" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

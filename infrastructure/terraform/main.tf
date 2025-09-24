@@ -1,0 +1,1187 @@
+# Multi-Cloud Financial Services Platform - Main Terraform Configuration
+# AWS Primary Infrastructure with Azure DR
+
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
+    }
+  }
+
+  backend "s3" {
+    bucket         = "fintech-platform-terraform-state"
+    key            = "production/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+
+# AWS Provider Configuration
+provider "aws" {
+  region = var.aws_primary_region
+  
+  default_tags {
+    tags = {
+      Project     = "FinTech-Trading-Platform"
+      Environment = var.environment
+      Owner       = "Platform-Team"
+      CostCenter  = "Engineering"
+      Compliance  = "SOC2-PCI-GDPR"
+    }
+  }
+}
+
+# Azure Provider Configuration (Commented out - excluding Azure resources)
+# provider "azurerm" {
+#   features {
+#     resource_group {
+#       prevent_deletion_if_contains_resources = false
+#     }
+#   }
+# }
+
+# Data Sources
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+data "aws_caller_identity" "current" {}
+
+# Local Values
+locals {
+  name_prefix = "${var.project_name}-${var.environment}"
+  
+  common_tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Owner       = "Platform-Team"
+  }
+
+  # Network Configuration
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  
+  # Subnet CIDRs
+  public_subnets   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  private_subnets  = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
+  database_subnets = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
+  mgmt_subnets     = ["10.0.30.0/24", "10.0.31.0/24"]
+}
+
+# VPC Configuration
+resource "aws_vpc" "main" {
+  cidr_block           = local.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-vpc"
+  })
+}
+
+# Internet Gateway
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-igw"
+  })
+}
+
+# Public Subnets
+resource "aws_subnet" "public" {
+  count = length(local.public_subnets)
+
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = local.public_subnets[count.index]
+  availability_zone       = local.azs[count.index]
+  map_public_ip_on_launch = true
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-public-${count.index + 1}"
+    Type = "Public"
+  })
+}
+
+# Private Subnets
+resource "aws_subnet" "private" {
+  count = length(local.private_subnets)
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.private_subnets[count.index]
+  availability_zone = local.azs[count.index]
+
+  tags = merge(local.common_tags, {
+    Name                              = "${local.name_prefix}-private-${count.index + 1}"
+    Type                              = "Private"
+    "kubernetes.io/role/internal-elb" = "1"
+  })
+}
+
+# Database Subnets
+resource "aws_subnet" "database" {
+  count = length(local.database_subnets)
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.database_subnets[count.index]
+  availability_zone = local.azs[count.index]
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-database-${count.index + 1}"
+    Type = "Database"
+  })
+}
+
+# NAT Gateways
+resource "aws_eip" "nat" {
+  count = length(local.public_subnets)
+
+  domain = "vpc"
+  depends_on = [aws_internet_gateway.main]
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-nat-eip-${count.index + 1}"
+  })
+}
+
+resource "aws_nat_gateway" "main" {
+  count = length(local.public_subnets)
+
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-nat-${count.index + 1}"
+  })
+
+  depends_on = [aws_internet_gateway.main]
+}
+
+# Route Tables
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-public-rt"
+  })
+}
+
+resource "aws_route_table" "private" {
+  count = length(local.private_subnets)
+
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main[count.index].id
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-private-rt-${count.index + 1}"
+  })
+}
+
+# Route Table Associations
+resource "aws_route_table_association" "public" {
+  count = length(aws_subnet.public)
+
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "private" {
+  count = length(aws_subnet.private)
+
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[count.index].id
+}
+
+# Database Route Tables
+resource "aws_route_table" "database" {
+  count = length(local.database_subnets)
+
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-database-rt-${count.index + 1}"
+  })
+}
+
+resource "aws_route_table_association" "database" {
+  count = length(aws_subnet.database)
+
+  subnet_id      = aws_subnet.database[count.index].id
+  route_table_id = aws_route_table.database[count.index].id
+}
+
+# Management Subnets
+resource "aws_subnet" "management" {
+  count = length(local.mgmt_subnets)
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.mgmt_subnets[count.index]
+  availability_zone = local.azs[count.index]
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-mgmt-${count.index + 1}"
+    Type = "Management"
+  })
+}
+
+# Management Route Table
+resource "aws_route_table" "management" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main[0].id
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-mgmt-rt"
+  })
+}
+
+resource "aws_route_table_association" "management" {
+  count = length(aws_subnet.management)
+
+  subnet_id      = aws_subnet.management[count.index].id
+  route_table_id = aws_route_table.management.id
+}
+
+# Database Subnet Group
+resource "aws_db_subnet_group" "main" {
+  name       = "${local.name_prefix}-db-subnet-group"
+  subnet_ids = aws_subnet.database[*].id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-db-subnet-group"
+  })
+}
+
+# Security Groups
+resource "aws_security_group" "alb" {
+  name_prefix = "${local.name_prefix}-alb-"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-alb-sg"
+  })
+}
+
+resource "aws_security_group" "eks_cluster" {
+  name_prefix = "${local.name_prefix}-eks-cluster-"
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-eks-cluster-sg"
+  })
+}
+
+resource "aws_security_group" "eks_nodes" {
+  name_prefix = "${local.name_prefix}-eks-nodes-"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port = 0
+    to_port   = 65535
+    protocol  = "tcp"
+    self      = true
+  }
+
+  ingress {
+    from_port       = 1025
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_cluster.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-eks-nodes-sg"
+  })
+}
+
+resource "aws_security_group" "database" {
+  name_prefix = "${local.name_prefix}-database-"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_nodes.id]
+  }
+
+  ingress {
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_nodes.id]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-database-sg"
+  })
+}
+
+resource "aws_security_group" "bastion" {
+  name_prefix = "${local.name_prefix}-bastion-"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-bastion-sg"
+  })
+}
+
+# KMS Keys
+resource "aws_kms_key" "cluster" {
+  description             = "EKS Cluster encryption key"
+  deletion_window_in_days = 30
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-eks-cluster-key"
+  })
+}
+
+resource "aws_kms_alias" "cluster" {
+  name          = "alias/${local.name_prefix}-eks-cluster"
+  target_key_id = aws_kms_key.cluster.key_id
+}
+
+resource "aws_kms_key" "database" {
+  description             = "RDS encryption key"
+  deletion_window_in_days = 30
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-database-key"
+  })
+}
+
+resource "aws_kms_alias" "database" {
+  name          = "alias/${local.name_prefix}-database"
+  target_key_id = aws_kms_key.database.key_id
+}
+
+# EKS Cluster IAM Role
+resource "aws_iam_role" "eks_cluster" {
+  name = "${local.name_prefix}-eks-cluster-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = local.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+# EKS Node Group IAM Role
+resource "aws_iam_role" "eks_nodes" {
+  name = "${local.name_prefix}-eks-nodes-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = local.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.eks_nodes.name
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.eks_nodes.name
+}
+
+resource "aws_iam_role_policy_attachment" "eks_container_registry_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.eks_nodes.name
+}
+
+# EKS Cluster
+resource "aws_eks_cluster" "main" {
+  name     = "${local.name_prefix}-cluster"
+  role_arn = aws_iam_role.eks_cluster.arn
+  version  = "1.28"
+
+  vpc_config {
+    subnet_ids              = concat(aws_subnet.private[*].id, aws_subnet.public[*].id)
+    endpoint_private_access = true
+    endpoint_public_access  = true
+    security_group_ids      = [aws_security_group.eks_cluster.id]
+  }
+
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.cluster.arn
+    }
+    resources = ["secrets"]
+  }
+
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_cluster_policy,
+  ]
+
+  tags = local.common_tags
+}
+
+# EKS Node Group
+resource "aws_eks_node_group" "main" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "${local.name_prefix}-nodes"
+  node_role_arn   = aws_iam_role.eks_nodes.arn
+  subnet_ids      = aws_subnet.private[*].id
+  instance_types  = ["c5.2xlarge", "r5.xlarge"]
+  capacity_type   = "ON_DEMAND"
+
+  scaling_config {
+    desired_size = 6
+    max_size     = 50
+    min_size     = 3
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_container_registry_policy,
+  ]
+
+  tags = local.common_tags
+}
+
+# Application Load Balancer
+resource "aws_lb" "main" {
+  name               = "${local.name_prefix}-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = aws_subnet.public[*].id
+
+  enable_deletion_protection = false
+
+  tags = local.common_tags
+}
+
+# RDS Aurora Cluster
+resource "aws_rds_cluster" "main" {
+  cluster_identifier      = "${local.name_prefix}-aurora"
+  engine                  = "aurora-postgresql"
+  engine_version          = "15.4"
+  database_name           = "trading_platform"
+  master_username         = "dbadmin"
+  manage_master_user_password = true
+  
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  vpc_security_group_ids = [aws_security_group.database.id]
+  
+  backup_retention_period = 7
+  preferred_backup_window = "03:00-04:00"
+  preferred_maintenance_window = "sun:04:00-sun:05:00"
+  
+  storage_encrypted = true
+  kms_key_id       = aws_kms_key.database.arn
+  
+  skip_final_snapshot = true
+  
+  tags = local.common_tags
+}
+
+resource "aws_rds_cluster_instance" "main" {
+  count              = 2
+  identifier         = "${local.name_prefix}-aurora-${count.index + 1}"
+  cluster_identifier = aws_rds_cluster.main.id
+  instance_class     = "db.r6g.large"
+  engine             = aws_rds_cluster.main.engine
+  engine_version     = aws_rds_cluster.main.engine_version
+  
+  tags = local.common_tags
+}
+
+# ElastiCache Redis Cluster
+resource "aws_elasticache_subnet_group" "main" {
+  name       = "${local.name_prefix}-cache-subnet"
+  subnet_ids = aws_subnet.database[*].id
+}
+
+resource "aws_elasticache_replication_group" "main" {
+  replication_group_id       = "${local.name_prefix}-redis"
+  description                = "Redis cluster for trading platform"
+  
+  node_type                  = "cache.r6g.large"
+  port                       = 6379
+  parameter_group_name       = "default.redis7"
+  
+  num_cache_clusters         = 2
+  
+  subnet_group_name          = aws_elasticache_subnet_group.main.name
+  security_group_ids         = [aws_security_group.database.id]
+  
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+  
+  tags = local.common_tags
+}
+
+# S3 Buckets
+resource "aws_s3_bucket" "data" {
+  bucket = "${local.name_prefix}-trading-data-${random_id.bucket_suffix.hex}"
+  
+  tags = local.common_tags
+}
+
+resource "aws_s3_bucket_encryption_configuration" "data" {
+  bucket = aws_s3_bucket.data.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.database.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "data" {
+  bucket = aws_s3_bucket.data.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
+# Kinesis Data Streams
+resource "aws_kinesis_stream" "trading_events" {
+  name             = "${local.name_prefix}-trading-events"
+  shard_count      = 10
+  retention_period = 24
+
+  encryption_type = "KMS"
+  kms_key_id      = aws_kms_key.database.arn
+
+  tags = local.common_tags
+}
+
+# SQS Queues
+resource "aws_sqs_queue" "order_processing" {
+  name                      = "${local.name_prefix}-order-processing"
+  delay_seconds             = 0
+  max_message_size          = 262144
+  message_retention_seconds = 1209600
+  receive_wait_time_seconds = 10
+  
+  kms_master_key_id = aws_kms_key.database.arn
+  
+  tags = local.common_tags
+}
+
+# CloudFront Distribution
+resource "aws_cloudfront_distribution" "main" {
+  origin {
+    domain_name = aws_lb.main.dns_name
+    origin_id   = "ALB-${aws_lb.main.name}"
+    
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  enabled = true
+  
+  default_cache_behavior {
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "ALB-${aws_lb.main.name}"
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+    
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+
+  tags = local.common_tags
+}
+
+# WAF Web ACL
+resource "aws_wafv2_web_acl" "main" {
+  name  = "${local.name_prefix}-waf"
+  scope = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                 = "CommonRuleSetMetric"
+      sampled_requests_enabled    = true
+    }
+  }
+
+  tags = local.common_tags
+}
+
+# Route 53 Hosted Zone
+resource "aws_route53_zone" "main" {
+  name = var.domain_name
+  
+  tags = local.common_tags
+}
+
+resource "aws_route53_record" "main" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = var.domain_name
+  type    = "A"
+  
+  alias {
+    name                   = aws_cloudfront_distribution.main.domain_name
+    zone_id                = aws_cloudfront_distribution.main.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+# Route 53 Health Check
+resource "aws_route53_health_check" "main" {
+  fqdn                            = aws_lb.main.dns_name
+  port                            = 443
+  type                            = "HTTPS"
+  resource_path                   = "/health"
+  failure_threshold               = 3
+  request_interval                = 30
+  
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-health-check"
+  })
+}
+
+# Bastion Host
+resource "aws_instance" "bastion" {
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t3.micro"
+  key_name              = aws_key_pair.bastion.key_name
+  vpc_security_group_ids = [aws_security_group.bastion.id]
+  subnet_id             = aws_subnet.management[0].id
+  
+  user_data = base64encode(templatefile("${path.module}/user_data/bastion.sh", {
+    region = var.aws_primary_region
+  }))
+  
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-bastion"
+    Type = "Bastion"
+  })
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+  
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_key_pair" "bastion" {
+  key_name   = "${local.name_prefix}-bastion-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7S6alRgQPnukAlLmw6VKMGBWYa+k+YpkuYjIMkXp4FzAOgqk1WrLvgPcykSMuUiX+3geqXMFGca1saWEAuFdyQSLdvnOmGFK3+aRXhHdtXPVFAXB6fsQ0rAhI+ibJQRrj6OLxNGtcPbFHNxrHQVHBdXeKrBHjkqHpuKSddc+kjT+wRupyEcsX98t0bAoV+RYyqWnWmrPQfWBzGC+/+UjVmFrU6OfBf9O2kWB3nFhS5W+bpgtzjStwdjSBnfRqFe6+fqjpfLP3Wrs+HFrIb6tui+JISMhYTDgG5aBjjPyI9rEh/iAMzHbseZOVBQAUoAMsMyM5hLm4nOB2aPK1 bastion@trading-platform"
+  
+  tags = local.common_tags
+}
+
+# CloudWatch Log Groups
+resource "aws_cloudwatch_log_group" "eks_cluster" {
+  name              = "/aws/eks/${aws_eks_cluster.main.name}/cluster"
+  retention_in_days = 30
+  kms_key_id       = aws_kms_key.cluster.arn
+  
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_log_group" "application" {
+  name              = "/aws/trading-platform/application"
+  retention_in_days = 90
+  kms_key_id       = aws_kms_key.cluster.arn
+  
+  tags = local.common_tags
+}am_role_policy_attachment" "eks_container_registry_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.eks_nodes.name
+}
+
+# EKS Cluster
+resource "aws_eks_cluster" "main" {
+  name     = "${local.name_prefix}-trading-cluster"
+  role_arn = aws_iam_role.eks_cluster.arn
+  version  = "1.28"
+
+  vpc_config {
+    subnet_ids              = concat(aws_subnet.private[*].id, aws_subnet.public[*].id)
+    endpoint_private_access = true
+    endpoint_public_access  = true
+    security_group_ids      = [aws_security_group.eks_cluster.id]
+  }
+
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.cluster.arn
+    }
+    resources = ["secrets"]
+  }
+
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_cluster_policy,
+  ]
+
+  tags = local.common_tags
+}
+
+# EKS Node Groups
+resource "aws_eks_node_group" "trading_engine" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "trading-engine"
+  node_role_arn   = aws_iam_role.eks_nodes.arn
+  subnet_ids      = aws_subnet.private[*].id
+  instance_types  = ["c5.2xlarge"]
+  capacity_type   = "ON_DEMAND"
+
+  scaling_config {
+    desired_size = 5
+    max_size     = 50
+    min_size     = 3
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    workload = "trading-engine"
+    tier     = "compute-optimized"
+  }
+
+  taint {
+    key    = "trading-engine"
+    value  = "true"
+    effect = "NO_SCHEDULE"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_container_registry_policy,
+  ]
+
+  tags = local.common_tags
+}
+
+resource "aws_eks_node_group" "general_workloads" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "general-workloads"
+  node_role_arn   = aws_iam_role.eks_nodes.arn
+  subnet_ids      = aws_subnet.private[*].id
+  instance_types  = ["m5.large", "m5.xlarge"]
+  capacity_type   = "SPOT"
+
+  scaling_config {
+    desired_size = 3
+    max_size     = 20
+    min_size     = 2
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    workload = "general"
+    tier     = "general-purpose"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_container_registry_policy,
+  ]
+
+  tags = local.common_tags
+}
+
+# Database Subnet Group
+resource "aws_db_subnet_group" "main" {
+  name       = "${local.name_prefix}-db-subnet-group"
+  subnet_ids = aws_subnet.database[*].id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-db-subnet-group"
+  })
+}
+
+# RDS Aurora Cluster
+resource "aws_rds_cluster" "main" {
+  cluster_identifier      = "${local.name_prefix}-trading-db"
+  engine                  = "aurora-postgresql"
+  engine_version          = "15.4"
+  database_name           = "trading_platform"
+  master_username         = "dbadmin"
+  manage_master_user_password = true
+  
+  vpc_security_group_ids = [aws_security_group.database.id]
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  
+  backup_retention_period = 30
+  preferred_backup_window = "03:00-04:00"
+  preferred_maintenance_window = "sun:04:00-sun:05:00"
+  
+  storage_encrypted = true
+  kms_key_id       = aws_kms_key.database.arn
+  
+  skip_final_snapshot = false
+  final_snapshot_identifier = "${local.name_prefix}-trading-db-final-snapshot"
+  
+  tags = local.common_tags
+}
+
+resource "aws_rds_cluster_instance" "main" {
+  count              = 2
+  identifier         = "${local.name_prefix}-trading-db-${count.index}"
+  cluster_identifier = aws_rds_cluster.main.id
+  instance_class     = "db.r6g.xlarge"
+  engine             = aws_rds_cluster.main.engine
+  engine_version     = aws_rds_cluster.main.engine_version
+  
+  performance_insights_enabled = true
+  monitoring_interval         = 60
+  
+  tags = local.common_tags
+}
+
+# Application Load Balancer (Private)
+resource "aws_lb" "main" {
+  name               = "${local.name_prefix}-alb"
+  internal           = true
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = aws_subnet.private[*].id
+
+  enable_deletion_protection = false
+
+  tags = local.common_tags
+}
+
+# ALB Target Group
+resource "aws_lb_target_group" "trading_api" {
+  name     = "${local.name_prefix}-trading-tg"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    interval            = 30
+    matcher             = "200"
+    path                = "/health"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 2
+  }
+
+  tags = local.common_tags
+}
+
+# ALB Listener
+resource "aws_lb_listener" "trading_api" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.trading_api.arn
+  }
+}
+
+# CloudFront Distribution
+resource "aws_cloudfront_distribution" "main" {
+  origin {
+    domain_name = aws_api_gateway_rest_api.trading_api.id
+    origin_id   = "APIGateway-${local.name_prefix}"
+    origin_path = "/prod"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  enabled = true
+
+  default_cache_behavior {
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "APIGateway-${local.name_prefix}"
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+      headers      = ["Authorization"]
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+
+  tags = local.common_tags
+}
+
+# API Gateway
+resource "aws_api_gateway_rest_api" "trading_api" {
+  name = "${local.name_prefix}-trading-api"
+  
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+
+  tags = local.common_tags
+}
+
+# API Gateway VPC Link
+resource "aws_api_gateway_vpc_link" "trading_vpc_link" {
+  name        = "${local.name_prefix}-vpc-link"
+  target_arns = [aws_lb.main.arn]
+
+  tags = local.common_tags
+}
+
+# API Gateway Integration
+resource "aws_api_gateway_integration" "trading_integration" {
+  rest_api_id = aws_api_gateway_rest_api.trading_api.id
+  resource_id = aws_api_gateway_rest_api.trading_api.root_resource_id
+  http_method = "ANY"
+  
+  integration_http_method = "ANY"
+  type                   = "HTTP_PROXY"
+  connection_type        = "VPC_LINK"
+  connection_id          = aws_api_gateway_vpc_link.trading_vpc_link.id
+  uri                    = "http://${aws_lb.main.dns_name}/{proxy}"
+}
+
+# API Gateway Method
+resource "aws_api_gateway_method" "trading_method" {
+  rest_api_id   = aws_api_gateway_rest_api.trading_api.id
+  resource_id   = aws_api_gateway_rest_api.trading_api.root_resource_id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+# API Gateway Deployment
+resource "aws_api_gateway_deployment" "trading_deployment" {
+  depends_on = [
+    aws_api_gateway_method.trading_method,
+    aws_api_gateway_integration.trading_integration
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.trading_api.id
+  stage_name  = "prod"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# API Gateway Custom Domain
+resource "aws_api_gateway_domain_name" "trading_domain" {
+  domain_name     = "api.${var.domain_name}"
+  certificate_arn = aws_acm_certificate.api_cert.arn
+
+  tags = local.common_tags
+}
+
+# ACM Certificate for API Gateway
+resource "aws_acm_certificate" "api_cert" {
+  domain_name       = "api.${var.domain_name}"
+  validation_method = "DNS"
+
+  tags = local.common_tags
+}
+
+# Route 53 Hosted Zone
+resource "aws_route53_zone" "main" {
+  name = var.domain_name
+
+  tags = local.common_tags
+}
+
+# Route 53 Record for API Gateway
+resource "aws_route53_record" "api" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "api.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_api_gateway_domain_name.trading_domain.cloudfront_domain_name
+    zone_id                = aws_api_gateway_domain_name.trading_domain.cloudfront_zone_id
+    evaluate_target_health = true
+  }
+}
+
+# Route 53 Health Check
+resource "aws_route53_health_check" "api_health" {
+  fqdn                            = "api.${var.domain_name}"
+  port                            = 443
+  type                            = "HTTPS"
+  resource_path                   = "/health"
+  failure_threshold               = 3
+  request_interval                = 30
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-api-health-check"
+  })
+}

@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" etag="xxx" version="22.1.16" type="device">
+  <diagram name="Multi-Cloud Architecture" id="multi-cloud-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Internet -->
+        <mxCell id="internet" value="Internet Users" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="500" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Route 53 -->
+        <mxCell id="route53" value="Route 53&#xa;DNS + Health Checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="480" y="140" width="160" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- AWS Primary -->
+        <mxCell id="aws-region" value="AWS Primary (us-east-1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="480" height="400" as="geometry" />
+        </mxCell>
+        
+        <!-- ALB -->
+        <mxCell id="alb" value="Application&#xa;Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- WAF -->
+        <mxCell id="waf" value="WAF + Shield" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="280" y="280" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- EKS Cluster -->
+        <mxCell id="eks" value="EKS Cluster" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="380" width="260" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- Trading Services -->
+        <mxCell id="trading-engine" value="Trading&#xa;Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="140" y="410" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-mgmt" value="Order&#xa;Mgmt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="410" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="risk-engine" value="Risk&#xa;Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="410" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="market-data" value="Market&#xa;Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="140" y="460" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-auth" value="User&#xa;Auth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="460" width="70" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Layer -->
+        <mxCell id="data-layer" value="Data Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="420" y="380" width="120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="aurora" value="RDS&#xa;Aurora" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="440" y="410" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="redis" value="ElastiCache&#xa;Redis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="440" y="450" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure DR -->
+        <mxCell id="azure-region" value="Azure DR (East US 2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="240" width="400" height="400" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure Gateway -->
+        <mxCell id="azure-gateway" value="Application&#xa;Gateway + WAF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="680" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- AKS Cluster -->
+        <mxCell id="aks" value="AKS Cluster (Standby)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="680" y="380" width="200" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="standby-pods" value="Standby Pods&#xa;(Warm)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="700" y="410" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sync-service" value="Data Sync&#xa;Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="410" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Azure Data -->
+        <mxCell id="azure-data" value="Azure Data Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="920" y="380" width="100" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="postgres" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="930" y="410" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="azure-redis" value="Azure Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="930" y="435" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- VPN Connection -->
+        <mxCell id="vpn" value="Site-to-Site VPN&#xa;Cross-Cloud Sync" style="shape=doubleArrow;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="520" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
