@@ -99,3 +99,81 @@ resource "aws_wafv2_web_acl_association" "main" {
   resource_arn = aws_lb.main.arn
   web_acl_arn  = aws_wafv2_web_acl.main.arn
 }
+
+# ALB Target Group for EKS
+resource "aws_lb_target_group" "eks" {
+  name     = "${var.name_prefix}-eks-tg"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    interval            = 30
+    matcher             = "200"
+    path                = "/health"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 2
+  }
+
+  tags = var.common_tags
+}
+
+# HTTPS Listener with Cognito Authentication
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = var.ssl_certificate_arn
+
+  # First action: Authenticate with Cognito
+  default_action {
+    type = "authenticate-cognito"
+    order = 1
+
+    authenticate_cognito {
+      user_pool_arn       = var.cognito_user_pool_arn
+      user_pool_client_id = var.cognito_user_pool_client_id
+      user_pool_domain    = var.cognito_user_pool_domain
+      
+      authentication_request_extra_params = {
+        "prompt" = "login"
+      }
+      
+      on_unauthenticated_request = "authenticate"
+    }
+  }
+
+  # Second action: Forward to EKS target group
+  default_action {
+    type             = "forward"
+    order            = 2
+    target_group_arn = aws_lb_target_group.eks.arn
+  }
+
+  tags = var.common_tags
+}
+
+# HTTP Listener (redirect to HTTPS)
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  tags = var.common_tags
+}

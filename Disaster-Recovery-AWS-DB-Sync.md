@@ -250,6 +250,108 @@ redis-cli -h <azure-redis-hostname> -p 6380 -a <azure-redis-key> --tls INFO keys
 - **Success Rate**: > 99.9%
 - **Execution Time**: < 60 seconds per sync
 
+## Pros and Cons Analysis
+
+### AWS DMS Choice Justification
+
+#### Why AWS DMS vs Other Options
+
+**✅ Pros:**
+- **Real-Time CDC**: Native Change Data Capture with <5 minute RPO
+- **Cross-Cloud Support**: Works seamlessly over VPN to Azure PostgreSQL
+- **PostgreSQL Optimized**: Native logical replication support
+- **Compliance Ready**: SOC 2/PCI-DSS compliant managed service
+- **Cost Effective**: $146/month vs $3K+ for Fivetran Enterprise
+- **Operational Simplicity**: Managed service with auto-failover
+- **Financial Services Ready**: ACID transactions + audit trail
+
+**❌ Cons:**
+- **Initial Sync Time**: 6-hour full load for large datasets
+- **Network Dependency**: Requires stable VPN connectivity
+- **Limited Transformation**: Basic data mapping only
+- **AWS Lock-in**: Vendor-specific solution
+
+**🚫 Rejected Alternatives:**
+| Solution | Why Rejected | Cost Impact |
+|----------|-------------|-------------|
+| **Kafka + Debezium** | Complex ops, requires dedicated team | $200K+ annually |
+| **Fivetran** | 10x cost, vendor lock-in | $36K+ annually |
+| **Custom Lambda** | No transaction consistency | $50K+ development |
+| **Azure Data Factory** | Reverse direction only | N/A |
+
+### Data Synchronization Volume
+
+#### Database (PostgreSQL) Sync Volume
+- **Initial Full Load**: 500GB-2TB (user accounts, trading history, compliance records)
+- **Daily CDC Volume**: 50GB-200GB (4.3B transactions/day at 50K TPS)
+- **Peak Load**: 100-150 Mbps during market open/close
+
+#### Cache (Redis) Sync Volume
+- **Session Data**: 10GB-50GB (user sessions, portfolio positions)
+- **Daily Updates**: 5GB-25GB (price updates, user preferences)
+- **Sync Frequency**: Every 30 seconds
+
+#### Volume by Scenario
+| Scenario | Database CDC | Redis Sync | Total Daily | Network Req |
+|----------|-------------|------------|-------------|-------------|
+| **Baseline (10K users)** | 50GB | 5GB | **55GB/day** | 15 Mbps |
+| **Growth (25K users)** | 125GB | 15GB | **140GB/day** | 20 Mbps |
+| **Enterprise (50K users)** | 200GB | 25GB | **225GB/day** | 25 Mbps |
+
+**Cost Impact**: $5-20/day data transfer + $200-300/month total sync cost
+
+### Bidirectional vs Unidirectional Design
+
+#### Current Implementation: Unidirectional (AWS → Azure)
+
+**✅ Pros:**
+- **Single Source of Truth**: AWS RDS primary, no conflicts
+- **Cost Optimized**: $146/month vs $292 for bidirectional
+- **Data Consistency**: No split-brain scenarios
+- **Compliance Friendly**: Clear audit trail for financial regulations
+- **DR Pattern**: Warm standby, not active-active
+- **Simplified Failover**: Route 53 DNS switch only
+
+**❌ Cons:**
+- **No Load Distribution**: Azure idle during normal operations
+- **Failback Complexity**: Manual process to return to AWS
+- **Regional Latency**: EU users always hit US primary
+- **Vendor Lock-in**: AWS-centric architecture
+
+#### If Bidirectional Was Needed
+
+**Requirements:**
+```hcl
+# Would require reverse DMS task
+resource "aws_dms_replication_task" "azure_to_aws" {
+  source_endpoint_arn = aws_dms_endpoint.target[0].endpoint_arn
+  target_endpoint_arn = aws_dms_endpoint.source.endpoint_arn
+  # + Conflict resolution logic
+}
+```
+
+**Additional Costs:**
+- **2x DMS Instances**: $292/month
+- **Conflict Resolution**: Custom Lambda functions
+- **Monitoring Complexity**: 2x CloudWatch metrics
+- **Development Overhead**: 3-6 months additional work
+
+**Use Cases for Bidirectional:**
+- Active-active multi-region deployment
+- Regional data sovereignty requirements
+- Load distribution across continents
+- Zero-downtime maintenance windows
+
+### Architecture Decision Summary
+
+| Aspect | Current Choice | Alternative | Justification |
+|--------|---------------|-------------|---------------|
+| **Replication Tool** | AWS DMS | Kafka/Fivetran | Cost + compliance + simplicity |
+| **Data Volume** | 55-225GB/day | N/A | Based on 50K TPS trading requirements |
+| **Direction** | Unidirectional | Bidirectional | DR pattern + cost optimization |
+| **Network** | VPN 10Gbps | Direct Connect | Cost vs complexity for DR use case |
+| **Failover** | DNS-based | Application-level | 15-minute RTO requirement |
+
 ## Troubleshooting Guide
 
 ### Common Issues and Solutions

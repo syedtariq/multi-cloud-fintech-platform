@@ -52,3 +52,23 @@ variable "common_tags" {
   description = "Common tags for all resources"
   type        = map(string)
 }
+
+variable "ssl_certificate_arn" {
+  description = "SSL certificate ARN for HTTPS listener"
+  type        = string
+}
+
+variable "cognito_user_pool_arn" {
+  description = "Cognito User Pool ARN"
+  type        = string
+}
+
+variable "cognito_user_pool_client_id" {
+  description = "Cognito User Pool Client ID"
+  type        = string
+}
+
+variable "cognito_user_pool_domain" {
+  description = "Cognito User Pool Domain"
+  type        = string
+}

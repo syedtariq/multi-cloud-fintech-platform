@@ -27,3 +27,8 @@ output "health_check_id" {
   description = "Route 53 health check ID"
   value       = aws_route53_health_check.api_health.id
 }
+
+output "ssl_certificate_arn" {
+  description = "SSL certificate ARN for HTTPS"
+  value       = aws_acm_certificate.api_cert.arn
+}

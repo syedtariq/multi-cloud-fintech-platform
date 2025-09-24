@@ -12,3 +12,8 @@ variable "common_tags" {
   description = "Common tags for all resources"
   type        = map(string)
 }
+
+variable "domain_name" {
+  description = "Domain name for ALB and Cognito callbacks"
+  type        = string
+}

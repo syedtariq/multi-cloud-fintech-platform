@@ -177,6 +177,65 @@ resource "aws_security_group" "database" {
   })
 }
 
+# Cognito User Pool for Authentication
+resource "aws_cognito_user_pool" "main" {
+  name = "${var.name_prefix}-user-pool"
+
+  password_policy {
+    minimum_length    = 12
+    require_lowercase = true
+    require_numbers   = true
+    require_symbols   = true
+    require_uppercase = true
+  }
+
+  mfa_configuration = "ON"
+  
+  software_token_mfa_configuration {
+    enabled = true
+  }
+
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "admin_only"
+      priority = 1
+    }
+  }
+
+  user_pool_add_ons {
+    advanced_security_mode = "ENFORCED"
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-user-pool"
+  })
+}
+
+resource "aws_cognito_user_pool_client" "main" {
+  name         = "${var.name_prefix}-user-pool-client"
+  user_pool_id = aws_cognito_user_pool.main.id
+
+  generate_secret                      = true
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
+  callback_urls                        = ["https://${var.domain_name}/oauth2/idpresponse"]
+  logout_urls                          = ["https://${var.domain_name}/logout"]
+  supported_identity_providers         = ["COGNITO"]
+
+  explicit_auth_flows = [
+    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
+  ]
+
+  tags = var.common_tags
+}
+
+resource "aws_cognito_user_pool_domain" "main" {
+  domain       = "${var.name_prefix}-auth"
+  user_pool_id = aws_cognito_user_pool.main.id
+}
+
 # IAM Roles
 resource "aws_iam_role" "eks_cluster" {
   name = "${var.name_prefix}-eks-cluster-role"
@@ -389,3 +448,19 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 }
 
 data "aws_caller_identity" "current" {}
+
+# Outputs for other modules
+output "cognito_user_pool_arn" {
+  description = "ARN of the Cognito User Pool"
+  value       = aws_cognito_user_pool.main.arn
+}
+
+output "cognito_user_pool_client_id" {
+  description = "ID of the Cognito User Pool Client"
+  value       = aws_cognito_user_pool_client.main.id
+}
+
+output "cognito_user_pool_domain" {
+  description = "Domain of the Cognito User Pool"
+  value       = aws_cognito_user_pool_domain.main.domain
+}

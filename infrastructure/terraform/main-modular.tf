@@ -138,6 +138,7 @@ module "us_security" {
 
   name_prefix = "${local.name_prefix}-us"
   vpc_id      = module.us_networking.vpc_id
+  domain_name = var.domain_name
   common_tags = merge(local.common_tags, { Region = "US" })
 }
 
@@ -152,6 +153,7 @@ module "eu_security" {
 
   name_prefix = "${local.name_prefix}-eu"
   vpc_id      = module.eu_networking[0].vpc_id
+  domain_name = "eu.${var.domain_name}"
   common_tags = merge(local.common_tags, { Region = "EU", GDPR = "Compliant" })
 }
 
@@ -196,17 +198,21 @@ module "us_compute" {
     aws = aws.us
   }
 
-  name_prefix         = "${local.name_prefix}-us"
-  vpc_id              = module.us_networking.vpc_id
-  private_subnet_ids  = module.us_networking.private_subnet_ids
-  public_subnet_ids   = module.us_networking.public_subnet_ids
-  alb_sg_id          = module.us_security.alb_sg_id
-  cluster_sg_id       = module.us_security.eks_cluster_sg_id
-  nodes_sg_id         = module.us_security.eks_nodes_sg_id
-  cluster_role_arn    = module.us_security.eks_cluster_role_arn
-  nodes_role_arn      = module.us_security.eks_nodes_role_arn
-  kms_key_arn        = module.us_security.cluster_kms_key_arn
-  common_tags        = merge(local.common_tags, { Region = "US" })
+  name_prefix                   = "${local.name_prefix}-us"
+  vpc_id                        = module.us_networking.vpc_id
+  private_subnet_ids            = module.us_networking.private_subnet_ids
+  public_subnet_ids             = module.us_networking.public_subnet_ids
+  alb_sg_id                    = module.us_security.alb_sg_id
+  cluster_sg_id                 = module.us_security.eks_cluster_sg_id
+  nodes_sg_id                   = module.us_security.eks_nodes_sg_id
+  cluster_role_arn              = module.us_security.eks_cluster_role_arn
+  nodes_role_arn                = module.us_security.eks_nodes_role_arn
+  kms_key_arn                  = module.us_security.cluster_kms_key_arn
+  ssl_certificate_arn           = module.us_api_gateway.ssl_certificate_arn
+  cognito_user_pool_arn         = module.us_security.cognito_user_pool_arn
+  cognito_user_pool_client_id   = module.us_security.cognito_user_pool_client_id
+  cognito_user_pool_domain      = module.us_security.cognito_user_pool_domain
+  common_tags                  = merge(local.common_tags, { Region = "US" })
 }
 
 # EU Compute Module (EKS)
@@ -218,17 +224,21 @@ module "eu_compute" {
     aws = aws.eu
   }
 
-  name_prefix         = "${local.name_prefix}-eu"
-  vpc_id              = module.eu_networking[0].vpc_id
-  private_subnet_ids  = module.eu_networking[0].private_subnet_ids
-  public_subnet_ids   = module.eu_networking[0].public_subnet_ids
-  alb_sg_id          = module.eu_security[0].alb_sg_id
-  cluster_sg_id       = module.eu_security[0].eks_cluster_sg_id
-  nodes_sg_id         = module.eu_security[0].eks_nodes_sg_id
-  cluster_role_arn    = module.eu_security[0].eks_cluster_role_arn
-  nodes_role_arn      = module.eu_security[0].eks_nodes_role_arn
-  kms_key_arn        = module.eu_security[0].cluster_kms_key_arn
-  common_tags        = merge(local.common_tags, { Region = "EU", GDPR = "Compliant" })
+  name_prefix                   = "${local.name_prefix}-eu"
+  vpc_id                        = module.eu_networking[0].vpc_id
+  private_subnet_ids            = module.eu_networking[0].private_subnet_ids
+  public_subnet_ids             = module.eu_networking[0].public_subnet_ids
+  alb_sg_id                    = module.eu_security[0].alb_sg_id
+  cluster_sg_id                 = module.eu_security[0].eks_cluster_sg_id
+  nodes_sg_id                   = module.eu_security[0].eks_nodes_sg_id
+  cluster_role_arn              = module.eu_security[0].eks_cluster_role_arn
+  nodes_role_arn                = module.eu_security[0].eks_nodes_role_arn
+  kms_key_arn                  = module.eu_security[0].cluster_kms_key_arn
+  ssl_certificate_arn           = module.eu_api_gateway[0].ssl_certificate_arn
+  cognito_user_pool_arn         = module.eu_security[0].cognito_user_pool_arn
+  cognito_user_pool_client_id   = module.eu_security[0].cognito_user_pool_client_id
+  cognito_user_pool_domain      = module.eu_security[0].cognito_user_pool_domain
+  common_tags                  = merge(local.common_tags, { Region = "EU", GDPR = "Compliant" })
 }
 
 # US API Gateway Module
