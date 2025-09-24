@@ -45,3 +45,32 @@ variable "azure_redis_endpoint" {
   type        = string
   default     = "azure-redis.redis.cache.windows.net"
 }
+
+variable "database_config" {
+  description = "Database configuration"
+  type = object({
+    engine_version          = string
+    instance_class         = string
+    allocated_storage      = number
+    max_allocated_storage  = number
+    backup_retention_days  = number
+    multi_az              = bool
+    performance_insights  = bool
+  })
+}
+
+variable "cache_config" {
+  description = "Cache configuration"
+  type = object({
+    engine_version     = string
+    node_type         = string
+    num_cache_nodes   = number
+    parameter_group   = string
+  })
+}
+
+variable "rds_password" {
+  description = "RDS master password"
+  type        = string
+  sensitive   = true
+}

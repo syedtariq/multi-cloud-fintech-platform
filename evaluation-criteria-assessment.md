@@ -98,7 +98,7 @@ Infrastructure Organization:
 │   ├── database/              # RDS, ElastiCache, S3
 │   ├── api-gateway/           # Route 53, CloudFront
 │   └── monitoring/            # CloudWatch, SNS, dashboards
-├── main-modular.tf            # Multi-region orchestration
+├── main.tf            # Multi-region orchestration
 ├── variables.tf               # Parameterized configuration
 ├── outputs.tf                 # Resource references
 └── cross-cloud-replication.tf # Multi-cloud integration

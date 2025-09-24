@@ -59,11 +59,65 @@ Secure, compliant trading platform designed for a fintech startup supporting **1
 │   └── 🔧 microservices-architecture.md # Service design patterns
 ├── 🏗️ infrastructure/
 │   └── terraform/
-│       ├── 📝 main.tf                  # Core infrastructure definition
-│       ├── 🔧 variables.tf             # Configuration parameters
-│       └── modules/                     # Reusable Terraform modules
+│       ├── 🌍 environments/            # Environment-specific configurations
+│       │   ├── us-prod/                # US Production Environment
+│       │   │   ├── main.tf             # US infrastructure orchestration
+│       │   │   ├── variables.tf        # US-specific variables
+│       │   │   ├── outputs.tf          # US outputs (ALB, S3)
+│       │   │   └── terraform.tfvars    # US production configuration
+│       │   ├── eu-prod/                # EU Production Environment (GDPR)
+│       │   │   ├── main.tf             # EU infrastructure orchestration
+│       │   │   ├── variables.tf        # EU-specific variables
+│       │   │   ├── outputs.tf          # EU outputs (ALB)
+│       │   │   └── terraform.tfvars    # EU production configuration
+│       │   ├── global/                 # Global Resources
+│       │   │   ├── main.tf             # Route 53, CloudFront, DNS routing
+│       │   │   ├── variables.tf        # Global variables
+│       │   │   └── terraform.tfvars    # Global configuration
+│       │   ├── README.md               # Environment deployment guide
+│       │   ├── MIGRATION_COMPLETE.md   # Migration documentation
+│       │   └── MODULE_UPDATES_COMPLETE.md # Module update documentation
+│       ├── 🧩 modules/                 # Reusable Terraform modules
+│       │   ├── networking/             # VPC, subnets, gateways
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   ├── security/               # Security groups, KMS, IAM, Cognito
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   ├── compute/                # EKS, ALB, auto-scaling
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   ├── database/               # RDS, ElastiCache, S3, Kinesis
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   ├── api-gateway/            # API Gateway, custom domains
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   ├── monitoring/             # CloudWatch, alarms, dashboards
+│       │   │   ├── main.tf
+│       │   │   ├── variables.tf
+│       │   │   └── outputs.tf
+│       │   └── cross-cloud-replication/ # DMS, VPN, Lambda sync
+│       │       ├── main.tf
+│       │       ├── variables.tf
+│       │       └── outputs.tf
+│       ├
+│       ├── azureDR/                    # Azure disaster recovery
+│       │   ├── main.tf                 # Azure infrastructure
+│       │   ├── variables.tf            # Azure variables
+│       │   └── modules/                # Azure-specific modules
+│       ├── lambda/                     # Lambda function code
+│       │   └── redis_replication.py    # Redis sync function
+│       └── user_data/                  # EC2 user data scripts
+│           └── bastion.sh              # Bastion host setup
 ├── 🔒 security/
-│   └── 📋 zero-trust-framework.md       # Comprehensive security implementation
+│   ├── 📋 zero-trust-framework.md       # Comprehensive security implementation
+│   └── 📊 Disaster-Recovery-AWS-DB-Sync.md # Cross-cloud replication guide
 ├── 💰 cost-analysis/
 │   └── 📊 cost-optimization-report.md   # Detailed cost analysis & ROI
 └── 📖 README.md                         # This file
@@ -85,24 +139,40 @@ Secure, compliant trading platform designed for a fintech startup supporting **1
    cd multi-cloud-fintech-platform
    ```
 
-2. **Configure Variables**
+2. **Deploy US Production Environment**
    ```bash
-   cd infrastructure/terraform
-   cp terraform.tfvars.example terraform.tfvars
+   cd infrastructure/terraform/environments/us-prod
    # Edit terraform.tfvars with your specific values
-   ```
-
-3. **Deploy Infrastructure**
-   ```bash
    terraform init
-   terraform plan
-   terraform apply
+   terraform plan -var-file="terraform.tfvars"
+   terraform apply -var-file="terraform.tfvars"
    ```
 
-4. **Configure Kubernetes**
+3. **Deploy EU Production Environment**
    ```bash
-   aws eks update-kubeconfig --region us-east-1 --name fintech-trading-cluster
-   kubectl apply -f k8s/
+   cd ../eu-prod
+   # Edit terraform.tfvars with your specific values
+   terraform init
+   terraform plan -var-file="terraform.tfvars"
+   terraform apply -var-file="terraform.tfvars"
+   ```
+
+4. **Deploy Global Resources**
+   ```bash
+   cd ../global
+   # Edit terraform.tfvars with your domain name
+   terraform init
+   terraform plan -var-file="terraform.tfvars"
+   terraform apply -var-file="terraform.tfvars"
+   ```
+
+5. **Configure Kubernetes**
+   ```bash
+   # US Cluster
+   aws eks update-kubeconfig --region us-east-1 --name fintech-trading-platform-prod-us-cluster
+   
+   # EU Cluster
+   aws eks update-kubeconfig --region eu-west-1 --name fintech-trading-platform-prod-eu-cluster
    ```
 
 ## 🎨 Enhanced Diagrams

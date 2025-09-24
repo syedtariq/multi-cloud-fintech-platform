@@ -23,3 +23,19 @@ variable "common_tags" {
   description = "Common tags for all resources"
   type        = map(string)
 }
+
+variable "monitoring_config" {
+  description = "Monitoring configuration"
+  type = object({
+    enable_detailed_monitoring = bool
+    log_retention_days        = number
+    create_dashboards         = bool
+    alert_thresholds = object({
+      cpu_utilization    = number
+      memory_utilization = number
+      disk_utilization   = number
+      api_latency_ms     = number
+      error_rate_percent = number
+    })
+  })
+}

@@ -72,3 +72,17 @@ variable "cognito_user_pool_domain" {
   description = "Cognito User Pool Domain"
   type        = string
 }
+
+variable "eks_config" {
+  description = "EKS cluster configuration"
+  type = object({
+    cluster_version = string
+    node_groups = map(object({
+      instance_types = list(string)
+      capacity_type  = string
+      min_size      = number
+      max_size      = number
+      desired_size  = number
+    }))
+  })
+}

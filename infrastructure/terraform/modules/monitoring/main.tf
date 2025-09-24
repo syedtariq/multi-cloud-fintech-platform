@@ -3,7 +3,7 @@
 # CloudWatch Log Groups
 resource "aws_cloudwatch_log_group" "eks_cluster" {
   name              = "/aws/eks/${var.eks_cluster_name}/cluster"
-  retention_in_days = 30
+  retention_in_days = var.monitoring_config.log_retention_days
   kms_key_id       = var.kms_key_arn
   
   tags = var.common_tags
@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "eks_cluster" {
 
 resource "aws_cloudwatch_log_group" "application" {
   name              = "/aws/trading-platform/application"
-  retention_in_days = 90
+  retention_in_days = var.monitoring_config.log_retention_days
   kms_key_id       = var.kms_key_arn
   
   tags = var.common_tags
@@ -19,7 +19,7 @@ resource "aws_cloudwatch_log_group" "application" {
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
   name              = "/aws/apigateway/${var.name_prefix}-trading-api"
-  retention_in_days = 30
+  retention_in_days = var.monitoring_config.log_retention_days
   kms_key_id       = var.kms_key_arn
   
   tags = var.common_tags
@@ -34,7 +34,7 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu" {
   namespace           = "AWS/EKS"
   period              = "300"
   statistic           = "Average"
-  threshold           = "80"
+  threshold           = var.monitoring_config.alert_thresholds.cpu_utilization
   alarm_description   = "This metric monitors EKS CPU utilization"
   alarm_actions       = [aws_sns_topic.alerts.arn]
 
@@ -53,7 +53,7 @@ resource "aws_cloudwatch_metric_alarm" "high_memory" {
   namespace           = "AWS/EKS"
   period              = "300"
   statistic           = "Average"
-  threshold           = "85"
+  threshold           = var.monitoring_config.alert_thresholds.memory_utilization
   alarm_description   = "This metric monitors EKS memory utilization"
   alarm_actions       = [aws_sns_topic.alerts.arn]
 
@@ -72,7 +72,7 @@ resource "aws_cloudwatch_metric_alarm" "api_latency" {
   namespace           = "AWS/ApiGateway"
   period              = "300"
   statistic           = "Average"
-  threshold           = "100"
+  threshold           = var.monitoring_config.alert_thresholds.api_latency_ms
   alarm_description   = "This metric monitors API Gateway latency"
   alarm_actions       = [aws_sns_topic.alerts.arn]
 
@@ -95,6 +95,7 @@ resource "aws_sns_topic_subscription" "email_alerts" {
 
 # CloudWatch Dashboard
 resource "aws_cloudwatch_dashboard" "trading_platform" {
+  count = var.monitoring_config.create_dashboards ? 1 : 0
   dashboard_name = "${var.name_prefix}-dashboard"
 
   dashboard_body = jsonencode({

@@ -14,15 +14,15 @@ resource "aws_db_subnet_group" "main" {
 resource "aws_rds_cluster" "main" {
   cluster_identifier      = "${var.name_prefix}-aurora"
   engine                  = "aurora-postgresql"
-  engine_version          = "15.4"
+  engine_version          = var.database_config.engine_version
   database_name           = "trading_platform"
   master_username         = "dbadmin"
-  manage_master_user_password = true
+  master_password         = var.rds_password
   
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = var.security_group_ids
   
-  backup_retention_period = 7
+  backup_retention_period = var.database_config.backup_retention_days
   preferred_backup_window = "03:00-04:00"
   preferred_maintenance_window = "sun:04:00-sun:05:00"
   
@@ -35,12 +35,13 @@ resource "aws_rds_cluster" "main" {
 }
 
 resource "aws_rds_cluster_instance" "main" {
-  count              = 2
+  count              = var.database_config.multi_az ? 2 : 1
   identifier         = "${var.name_prefix}-aurora-${count.index + 1}"
   cluster_identifier = aws_rds_cluster.main.id
-  instance_class     = "db.r6g.large"
+  instance_class     = var.database_config.instance_class
   engine             = aws_rds_cluster.main.engine
   engine_version     = aws_rds_cluster.main.engine_version
+  performance_insights_enabled = var.database_config.performance_insights
   
   tags = var.common_tags
 }
@@ -56,11 +57,12 @@ resource "aws_elasticache_replication_group" "main" {
   replication_group_id       = "${var.name_prefix}-redis"
   description                = "Redis cluster for trading platform"
   
-  node_type                  = "cache.r6g.large"
+  node_type                  = var.cache_config.node_type
   port                       = 6379
-  parameter_group_name       = "default.redis7"
+  parameter_group_name       = var.cache_config.parameter_group
+  engine_version             = var.cache_config.engine_version
   
-  num_cache_clusters         = 2
+  num_cache_clusters         = var.cache_config.num_cache_nodes
   
   subnet_group_name          = aws_elasticache_subnet_group.main.name
   security_group_ids         = var.security_group_ids

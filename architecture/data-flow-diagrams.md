@@ -19,10 +19,10 @@ Cross-Cloud Sync → Azure Event Hubs
 ```
 AWS Primary                          Azure DR
      ↓                                  ↑
-┌─────────────┐                  ┌─────────────┐
-│ RDS Aurora  │ ──── VPN ────→   │ PostgreSQL  │
-│ (Master)    │                  │ (Replica)   │
-└─────────────┘                  └─────────────┘
+┌─────────────┐                            ┌─────────────┐
+│ RDS Aurora  │ ──── (AWS DMS OVER VPN) ─  │ PostgreSQL  │
+│ (Master)    │                            │ (Replica)   │
+└─────────────┘                            └─────────────┘
      ↓                                  ↑
 ┌─────────────┐                  ┌─────────────┐
 │ ElastiCache │ ──── Sync ────→  │ Azure Cache │

@@ -17,7 +17,7 @@ resource "aws_lb" "main" {
 resource "aws_eks_cluster" "main" {
   name     = "${var.name_prefix}-cluster"
   role_arn = var.cluster_role_arn
-  version  = "1.28"
+  version  = var.eks_config.cluster_version
 
   vpc_config {
     subnet_ids              = concat(var.private_subnet_ids, var.public_subnet_ids)
@@ -38,26 +38,30 @@ resource "aws_eks_cluster" "main" {
   tags = var.common_tags
 }
 
-# EKS Node Group
-resource "aws_eks_node_group" "main" {
+# EKS Node Groups (Dynamic)
+resource "aws_eks_node_group" "node_groups" {
+  for_each = var.eks_config.node_groups
+  
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.name_prefix}-nodes"
+  node_group_name = "${var.name_prefix}-${each.key}"
   node_role_arn   = var.nodes_role_arn
   subnet_ids      = var.private_subnet_ids
-  instance_types  = ["c5.2xlarge", "r5.xlarge"]
-  capacity_type   = "ON_DEMAND"
+  instance_types  = each.value.instance_types
+  capacity_type   = each.value.capacity_type
 
   scaling_config {
-    desired_size = 6
-    max_size     = 50
-    min_size     = 3
+    desired_size = each.value.desired_size
+    max_size     = each.value.max_size
+    min_size     = each.value.min_size
   }
 
   update_config {
     max_unavailable = 1
   }
 
-  tags = var.common_tags
+  tags = merge(var.common_tags, {
+    NodeGroup = each.key
+  })
 }
 
 # WAF Web ACL for ALB
