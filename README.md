@@ -25,6 +25,13 @@ Secure, compliant trading platform designed for a fintech startup supporting **1
 - **🌐 CDN**: CloudFront with WAF protection
 - **🔒 Security**: Zero-trust architecture, VPC isolation
 
+### AWS Primary Infrastructure (eu-west-1) ( For EU REGION)
+- **🚀 Compute**: EKS cluster with auto-scaling node groups
+- **💾 Database**: RDS Aurora PostgreSQL (Multi-AZ, encrypted)
+- **⚡ Cache**: ElastiCache Redis cluster
+- **🌐 CDN**: CloudFront with WAF protection
+- **🔒 Security**: Zero-trust architecture, VPC isolation
+
 ### Azure DR Infrastructure (East US 2)
 - **☁️ Compute**: AKS warm standby cluster
 - **💾 Database**: PostgreSQL read replica
