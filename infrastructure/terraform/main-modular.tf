@@ -94,8 +94,11 @@ module "compute" {
   vpc_id              = module.networking.vpc_id
   private_subnet_ids  = module.networking.private_subnet_ids
   public_subnet_ids   = module.networking.public_subnet_ids
+  alb_sg_id          = module.security.alb_sg_id
   cluster_sg_id       = module.security.eks_cluster_sg_id
   nodes_sg_id         = module.security.eks_nodes_sg_id
+  cluster_role_arn    = module.security.eks_cluster_role_arn
+  nodes_role_arn      = module.security.eks_nodes_role_arn
   kms_key_arn        = module.security.cluster_kms_key_arn
   common_tags        = local.common_tags
 }
@@ -115,8 +118,9 @@ module "api_gateway" {
 module "monitoring" {
   source = "./modules/monitoring"
 
-  name_prefix     = local.name_prefix
-  eks_cluster_name = module.compute.eks_cluster_name
-  kms_key_arn     = module.security.cluster_kms_key_arn
-  common_tags     = local.common_tags
+  name_prefix            = local.name_prefix
+  eks_cluster_name       = module.compute.eks_cluster_name
+  kms_key_arn           = module.security.cluster_kms_key_arn
+  notification_endpoints = var.notification_endpoints
+  common_tags           = local.common_tags
 }

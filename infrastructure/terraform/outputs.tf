@@ -1,202 +1,150 @@
-# Outputs for Multi-Cloud Financial Services Platform
+# Outputs for Multi-Cloud Financial Services Platform (Modular)
 
 # Network Outputs
 output "vpc_id" {
   description = "ID of the VPC"
-  value       = aws_vpc.main.id
+  value       = module.networking.vpc_id
 }
 
 output "public_subnet_ids" {
   description = "IDs of the public subnets"
-  value       = aws_subnet.public[*].id
+  value       = module.networking.public_subnet_ids
 }
 
 output "private_subnet_ids" {
   description = "IDs of the private subnets"
-  value       = aws_subnet.private[*].id
+  value       = module.networking.private_subnet_ids
 }
 
 output "database_subnet_ids" {
   description = "IDs of the database subnets"
-  value       = aws_subnet.database[*].id
-}
-
-output "management_subnet_ids" {
-  description = "IDs of the management subnets"
-  value       = aws_subnet.management[*].id
+  value       = module.networking.database_subnet_ids
 }
 
 # Load Balancer Outputs
 output "alb_dns_name" {
   description = "DNS name of the Application Load Balancer"
-  value       = aws_lb.main.dns_name
-}
-
-output "alb_zone_id" {
-  description = "Zone ID of the Application Load Balancer"
-  value       = aws_lb.main.zone_id
+  value       = module.compute.alb_dns_name
 }
 
 # EKS Outputs
-output "eks_cluster_id" {
-  description = "EKS cluster ID"
-  value       = aws_eks_cluster.main.id
-}
-
-output "eks_cluster_arn" {
-  description = "EKS cluster ARN"
-  value       = aws_eks_cluster.main.arn
+output "eks_cluster_name" {
+  description = "EKS cluster name"
+  value       = module.compute.eks_cluster_name
 }
 
 output "eks_cluster_endpoint" {
   description = "EKS cluster endpoint"
-  value       = aws_eks_cluster.main.endpoint
+  value       = module.compute.eks_cluster_endpoint
 }
 
 output "eks_cluster_security_group_id" {
   description = "Security group ID attached to the EKS cluster"
-  value       = aws_security_group.eks_cluster.id
+  value       = module.security.eks_cluster_sg_id
 }
 
 # Database Outputs
-output "rds_cluster_id" {
-  description = "RDS Aurora cluster ID"
-  value       = aws_rds_cluster.main.id
-}
-
 output "rds_cluster_endpoint" {
   description = "RDS Aurora cluster endpoint"
-  value       = aws_rds_cluster.main.endpoint
+  value       = module.database.rds_cluster_endpoint
 }
 
 output "rds_cluster_reader_endpoint" {
   description = "RDS Aurora cluster reader endpoint"
-  value       = aws_rds_cluster.main.reader_endpoint
+  value       = module.database.rds_cluster_reader_endpoint
 }
 
 # Cache Outputs
-output "redis_cluster_id" {
-  description = "ElastiCache Redis cluster ID"
-  value       = aws_elasticache_replication_group.main.id
-}
-
 output "redis_primary_endpoint" {
   description = "ElastiCache Redis primary endpoint"
-  value       = aws_elasticache_replication_group.main.primary_endpoint_address
+  value       = module.database.redis_primary_endpoint
 }
 
 # CloudFront Outputs
 output "cloudfront_distribution_id" {
   description = "CloudFront distribution ID"
-  value       = aws_cloudfront_distribution.main.id
+  value       = module.compute.cloudfront_distribution_id
 }
 
 output "cloudfront_domain_name" {
   description = "CloudFront distribution domain name"
-  value       = aws_cloudfront_distribution.main.domain_name
-}
-
-# Route 53 Outputs
-output "route53_zone_id" {
-  description = "Route 53 hosted zone ID"
-  value       = aws_route53_zone.main.zone_id
-}
-
-output "route53_name_servers" {
-  description = "Route 53 name servers"
-  value       = aws_route53_zone.main.name_servers
+  value       = module.compute.cloudfront_domain_name
 }
 
 # Security Outputs
 output "waf_web_acl_id" {
   description = "WAF Web ACL ID"
-  value       = aws_wafv2_web_acl.main.id
+  value       = module.compute.waf_web_acl_id
 }
 
 # Storage Outputs
 output "s3_bucket_name" {
   description = "S3 bucket name for trading data"
-  value       = aws_s3_bucket.data.bucket
+  value       = module.database.s3_bucket_name
 }
 
 output "kinesis_stream_name" {
   description = "Kinesis stream name for trading events"
-  value       = aws_kinesis_stream.trading_events.name
+  value       = module.database.kinesis_stream_name
 }
 
 output "sqs_queue_url" {
   description = "SQS queue URL for order processing"
-  value       = aws_sqs_queue.order_processing.url
-}
-
-# Management Outputs
-output "bastion_instance_id" {
-  description = "Bastion host instance ID"
-  value       = aws_instance.bastion.id
-}
-
-output "bastion_public_ip" {
-  description = "Bastion host public IP"
-  value       = aws_instance.bastion.public_ip
+  value       = module.database.sqs_queue_url
 }
 
 # KMS Outputs
-output "kms_cluster_key_id" {
-  description = "KMS key ID for EKS cluster encryption"
-  value       = aws_kms_key.cluster.key_id
+output "kms_cluster_key_arn" {
+  description = "KMS key ARN for EKS cluster encryption"
+  value       = module.security.cluster_kms_key_arn
 }
 
-output "kms_database_key_id" {
-  description = "KMS key ID for database encryption"
-  value       = aws_kms_key.database.key_id
+output "kms_database_key_arn" {
+  description = "KMS key ARN for database encryption"
+  value       = module.security.database_kms_key_arn
 }
 
-# Architecture Alignment Summary
+# Architecture Summary
 output "architecture_summary" {
   description = "Summary of implemented architecture components"
   value = {
     # Network Layer
-    vpc_cidr = local.vpc_cidr
+    vpc_cidr = "10.0.0.0/16"
     availability_zones = local.azs
     
     # Security Zones (as per network topology diagram)
     dmz_zone = {
       description = "Public subnets with ALB, NAT Gateways"
-      subnets = local.public_subnets
+      subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
     }
     
     application_zone = {
       description = "Private subnets with EKS worker nodes"
-      subnets = local.private_subnets
+      subnets = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
     }
     
     data_zone = {
       description = "Database subnets with RDS, ElastiCache"
-      subnets = local.database_subnets
-    }
-    
-    management_zone = {
-      description = "Management subnets with bastion host"
-      subnets = local.mgmt_subnets
+      subnets = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
     }
     
     # Core Services (as per high-level architecture diagram)
     compute_services = {
-      eks_cluster = aws_eks_cluster.main.name
+      eks_cluster = module.compute.eks_cluster_name
       node_groups = "Trading Engine, Order Management, Risk Engine pods"
     }
     
     data_services = {
-      rds_aurora = aws_rds_cluster.main.cluster_identifier
-      elasticache_redis = aws_elasticache_replication_group.main.replication_group_id
-      kinesis_streams = aws_kinesis_stream.trading_events.name
-      s3_storage = aws_s3_bucket.data.bucket
-      sqs_queues = aws_sqs_queue.order_processing.name
+      rds_aurora = "Aurora PostgreSQL cluster"
+      elasticache_redis = "Redis cluster"
+      kinesis_streams = module.database.kinesis_stream_name
+      s3_storage = module.database.s3_bucket_name
+      sqs_queues = "Order processing queue"
     }
     
     security_services = {
-      waf = aws_wafv2_web_acl.main.name
-      cloudfront_cdn = aws_cloudfront_distribution.main.id
+      waf = "Web Application Firewall"
+      cloudfront_cdn = module.compute.cloudfront_distribution_id
       kms_encryption = "Cluster and Database keys configured"
     }
     
