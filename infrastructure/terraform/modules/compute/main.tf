@@ -136,6 +136,7 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = var.ssl_certificate_arn
 
   # First action: Authenticate with Cognito
+  # Should support any OIDC For e.g OKTA z
   default_action {
     type = "authenticate-cognito"
     order = 1
